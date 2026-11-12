@@ -1,51 +1,42 @@
+"""Lokal ishga tushirish (polling). Vercel'da ishlatilmaydi — u yerda api/index.py ishlaydi.
+
+Diqqat: polling ishlashi uchun webhook o'chiriladi. Keyin Vercel'dagi botni qayta ulash uchun
+https://<sayt>/api/setup?secret=... manzilini yana bir marta oching.
+"""
+
 import asyncio
 import logging
 
-from aiogram import Bot, Dispatcher
-from aiogram.client.default import DefaultBotProperties
-from aiogram.enums import ParseMode
-from aiogram.fsm.storage.memory import MemoryStorage
-from aiogram.types import BotCommand, BotCommandScopeAllPrivateChats
+from aiogram.types import Update
 
-from .config import config
-from .db import DB
-from .handlers import routers
+from .app import dp, handle_update, make_bot, open_db
 
 log = logging.getLogger("bot")
 
 
 async def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
+    db = await open_db(create_schema=True)
+    await db.close()
 
-    db = DB(config.db_path)
-    await db.connect()
-
-    bot = Bot(config.bot_token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
-    dp = Dispatcher(storage=MemoryStorage(), db=db)
-    dp.include_routers(*routers)
-
-    await bot.set_my_commands(
-        [
-            BotCommand(command="start", description="Asosiy menyu / Главное меню"),
-            BotCommand(command="new", description="Murojaat yuborish / Оставить обращение"),
-            BotCommand(command="cancel", description="Bekor qilish / Отменить"),
-        ],
-        scope=BotCommandScopeAllPrivateChats(),
-    )
-
+    bot = make_bot()
+    await bot.delete_webhook()
     me = await bot.get_me()
-    if config.group_chat_id:
-        log.info("@%s ishga tushdi. Murojaatlar guruhi: %s", me.username, config.group_chat_id)
-    else:
-        log.warning(
-            "@%s ishga tushdi, lekin GROUP_CHAT_ID sozlanmagan! Botni guruhga qo'shing — "
-            "u guruh ID'sini o'zi yozib beradi.", me.username,
-        )
+    log.info("@%s lokal rejimda ishga tushdi (polling)", me.username)
 
+    offset = None
     try:
-        await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
+        while True:
+            updates: list[Update] = await bot.get_updates(
+                offset=offset, timeout=30, allowed_updates=dp.resolve_used_update_types()
+            )
+            for update in updates:
+                offset = update.update_id + 1
+                try:
+                    await handle_update(update.model_dump(mode="json", exclude_none=True, by_alias=True))
+                except Exception:
+                    log.exception("Update %s ni qayta ishlashda xatolik", update.update_id)
     finally:
-        await db.close()
         await bot.session.close()
 
 

@@ -7,7 +7,7 @@ import time
 from collections import defaultdict
 
 from aiogram import Bot, F, Router
-from aiogram.exceptions import TelegramMigrateToChat
+from aiogram.exceptions import TelegramMigrateToChat, TelegramRetryAfter
 from aiogram.filters import Command, CommandStart, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
@@ -372,7 +372,11 @@ async def submit_ticket(bot: Bot, db: DB, user, data: dict, lang: str) -> int | 
     reply_to = ReplyParameters(message_id=card.message_id, allow_sending_without_reply=True)
     for part in to_copy:
         try:
-            copied = await bot.copy_message(chat_id, user.id, part["id"], reply_parameters=reply_to)
+            try:
+                copied = await bot.copy_message(chat_id, user.id, part["id"], reply_parameters=reply_to)
+            except TelegramRetryAfter as e:  # Telegram "sekinroq" desa — kutib, qayta urinamiz
+                await asyncio.sleep(min(e.retry_after, 15))
+                copied = await bot.copy_message(chat_id, user.id, part["id"], reply_parameters=reply_to)
             await db.link(chat_id, copied.message_id, ticket_id)
         except Exception:
             log.exception("Ilovani nusxalab bo‘lmadi (ticket %s, msg %s)", ticket_id, part["id"])

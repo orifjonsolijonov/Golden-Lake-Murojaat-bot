@@ -60,39 +60,45 @@ Har bir murojaat shunday ko‘rinadi:
 - Qidiruv: `#murojaat_0012`, `#shikoyat`, `#xarid` va h.k. hashtaglar.
 - `/stats` — murojaatlar statistikasi. `/chatid` — guruh ID’sini ko‘rsatadi.
 
-## O‘rnatish
+## Vercel'ga o‘rnatish (bepul)
 
-1. `.env.example` dan `.env` nusxa oling va to‘ldiring:
+Bot Vercel’da (bepul) ishlaydi, ma’lumotlar Neon’da (bepul Postgres) saqlanadi.
+
+1. **Vercel’da loyiha:** [vercel.com](https://vercel.com) → GitHub orqali kiring → **Add New → Project** →
+   `Golden-Lake-Murojaat-bot` repo’sini **Import** qiling → Framework: **Other** →
+   **Environment Variables** ga qo‘shing:
+
+   | Nomi | Qiymati |
+   |---|---|
+   | `BOT_TOKEN` | @BotFather tokeni |
+   | `GROUP_CHAT_ID` | `-1003561633389` |
+   | `WEBHOOK_SECRET` | o‘zingiz o‘ylab topgan maxfiy so‘z (faqat lotin harf va raqam) |
+
+   **Deploy** ni bosing.
+2. **Baza (Neon):** loyiha ichida **Storage → Create Database → Neon (Serverless Postgres)** →
+   region: **Frankfurt** → **Create** → loyihaga **Connect** qiling. `DATABASE_URL` avtomatik qo‘shiladi.
+   (Yoki [neon.tech](https://neon.tech) da baza ochib, connection string’ni `DATABASE_URL` sifatida qo‘lda qo‘shing.)
+3. **Qayta deploy:** **Deployments** → oxirgi deploy yonidagi **⋯ → Redeploy**
+   (yangi o‘zgaruvchilar faqat shundan keyin ishlaydi).
+4. **Botni ulash** — brauzerda bir marta oching:
    ```
-   BOT_TOKEN=...            # @BotFather tokeni
-   GROUP_CHAT_ID=-100...    # murojaatlar guruhining ID'si
+   https://<loyiha-nomi>.vercel.app/api/setup?secret=<WEBHOOK_SECRET>
    ```
-   Guruh ID’sini bilmasangiz: botni guruhga qo‘shing — u ID’ni o‘zi yozib beradi (yoki guruhda `/chatid`).
-2. Botni guruhga **admin** qilib qo‘ying (Reply’larni ko‘rishi va reaksiya qo‘yishi uchun).
-3. Ishga tushiring — quyidagi variantlardan biri.
+   `"✅ Tayyor! Bot ishlayapti"` chiqsa — hammasi joyida. Botga `/start` yozib tekshiring.
 
-### Docker (tavsiya etiladi)
-```bash
-docker compose up -d --build
-docker compose logs -f
-```
+Bot guruhda **admin** bo‘lishi kerak. Guruh ID’sini bilmasangiz — botni guruhga qo‘shing, u ID’ni o‘zi yozib beradi
+(yoki guruhda `/chatid`).
 
-### Oddiy server (systemd)
-```bash
-cd /opt && git clone <repo> Golden-Lake-Murojaat-bot && cd Golden-Lake-Murojaat-bot
-python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
-cp .env.example .env && nano .env
-sudo cp deploy/goldenlake-bot.service /etc/systemd/system/
-sudo systemctl enable --now goldenlake-bot
-```
+**Muammo bo‘lsa:** Vercel → loyiha → **Logs** bo‘limida xatolik ko‘rinadi.
+`https://<loyiha>.vercel.app/` ochilsa `"Golden Lake murojaat boti ishlayapti"` chiqishi kerak.
 
-### Lokal
+### Lokal ishga tushirish (dasturchilar uchun)
 ```bash
 pip install -r requirements.txt
-python -m bot
+cp .env.example .env   # to‘ldiring
+python -m bot          # polling rejimi — Vercel webhook’ini o‘chiradi!
 ```
-
-Ma’lumotlar (murojaatlar, foydalanuvchilar) `data/bot.db` (SQLite) faylida saqlanadi — uni zaxiralab turing.
+Lokal sinovdan so‘ng Vercel’dagi botni qayta ulash uchun `/api/setup?secret=...` ni yana oching.
 
 ## Matnlarni o‘zgartirish
 
@@ -102,13 +108,17 @@ kompaniya telefoni/sayti — fayl boshidagi `PHONE`, `SITE`, `EMAIL`.
 ## Tuzilma
 
 ```
+api/index.py       Vercel kirish nuqtasi (webhook, /api/setup)
+vercel.json        Vercel sozlamalari
 bot/
-  __main__.py      ishga tushirish
-  config.py        .env sozlamalari
+  app.py           dispatcher, update’ni qayta ishlash, webhook o‘rnatish
+  __main__.py      lokal ishga tushirish (polling)
+  config.py        sozlamalar (environment variables)
+  storage.py       mijoz qaysi bosqichdaligini Postgres’da saqlash
   texts.py         barcha matnlar (uz/ru)
   keyboards.py     tugmalar
   card.py          guruhdagi murojaat kartochkasi
-  db.py            SQLite
+  db.py            Postgres (Neon)
   handlers/user.py   mijoz oqimi
   handlers/group.py  guruh: javob, holatlar, /stats
 ```

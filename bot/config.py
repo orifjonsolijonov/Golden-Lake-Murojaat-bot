@@ -18,19 +18,25 @@ class Config:
     group_chat_id: int | None
     group_thread_id: int | None
     tz: ZoneInfo
-    db_path: str
+    database_url: str
+    webhook_secret: str
+
+
+def _require(name: str, hint: str) -> str:
+    value = os.getenv(name, "").strip()
+    if not value:
+        raise RuntimeError(f"{name} topilmadi ({hint}). Vercel → Settings → Environment Variables ga qo'shing.")
+    return value
 
 
 def load_config() -> Config:
-    token = os.getenv("BOT_TOKEN", "").strip()
-    if not token:
-        raise RuntimeError("BOT_TOKEN topilmadi. .env faylini to'ldiring (.env.example ga qarang).")
     return Config(
-        bot_token=token,
+        bot_token=_require("BOT_TOKEN", "@BotFather tokeni"),
         group_chat_id=_int_or_none(os.getenv("GROUP_CHAT_ID")),
         group_thread_id=_int_or_none(os.getenv("GROUP_THREAD_ID")),
         tz=ZoneInfo(os.getenv("TIMEZONE", "Asia/Tashkent")),
-        db_path=os.getenv("DB_PATH", "data/bot.db"),
+        database_url=_require("DATABASE_URL", "Neon'dan olingan Postgres manzili"),
+        webhook_secret=os.getenv("WEBHOOK_SECRET", "").strip(),
     )
 
 
