@@ -1,0 +1,13 @@
+# /etc/systemd/system/goldenlake-bot.service
+[Unit]
+Description=Golden Lake murojaat bot
+After=network-online.target
+
+[Service]
+WorkingDirectory=/opt/Golden-Lake-Murojaat-bot
+ExecStart=/opt/Golden-Lake-Murojaat-bot/.venv/bin/python -m bot
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
