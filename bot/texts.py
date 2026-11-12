@@ -31,7 +31,6 @@ T: dict[str, dict[str, str]] = {
     "uz": {
         # --- Tugmalar ---
         "btn_new": "✍️ Murojaat yuborish",
-        "btn_about": "🏢 Golden Lake haqida",
         "btn_contacts": "📞 Bog‘lanish",
         "btn_lang": "🌐 Tilni o‘zgartirish",
         "btn_cancel": "❌ Bekor qilish",
@@ -60,24 +59,6 @@ T: dict[str, dict[str, str]] = {
         "menu": "Asosiy menyu. Kerakli bo‘limni tanlang 👇",
         "use_menu": "Iltimos, quyidagi menyudan foydalaning 👇\n\nYangi murojaat uchun <b>«✍️ Murojaat yuborish»</b> tugmasini bosing.",
         "cancelled": "Murojaat bekor qilindi. Istalgan vaqtda qaytadan yuborishingiz mumkin.",
-        "about": (
-            "🏢 <b>Golden Lake</b> — #yashash_uchun\n\n"
-            "Toshkent shahri, Mirobod tumanida joylashgan komfort-klassdagi zamonaviy "
-            "turar-joy majmuasi. Quruvchi — <b>Centris Development</b>.\n\n"
-            "🌳 <b>Hudud:</b> maydonning 70% i ko‘kalamzorlashtirilgan, mini-ko‘l va park, "
-            "1 000 dan ortiq daraxt va butalar\n"
-            "🏙 <b>Binolar:</b> 13, 15 va 16 qavatli\n"
-            "🛏 <b>Xonadonlar:</b> 1 xonalidan 5 xonaligacha, 30 m² dan 250 m² gacha\n"
-            "📐 <b>Shift balandligi:</b> 3 m gacha\n"
-            "🔥 <b>Isitish:</b> avtonom, ikki konturli gaz qozoni\n"
-            "🚗 <b>Avtoturargoh:</b> yer osti va yer usti parkovka\n"
-            "🛡 <b>Xavfsizlik:</b> videokuzatuv va kirish nazorati\n"
-            "👨‍👩‍👧 <b>Hovli ichida:</b> bolalar maydonchalari, yozgi terrasa, dam olish zonalari\n\n"
-            "📍 <b>Yaqinida:</b> Furqat nomidagi park, Toshkent xalqaro maktabi, "
-            "5 dan ortiq maktab va bog‘cha, 3-shahar klinikasi, 5-tug‘ruqxona, aeroport.\n\n"
-            "Narxlar va to‘lov shartlari bo‘yicha savolingiz bo‘lsa — "
-            "<b>«✍️ Murojaat yuborish»</b> tugmasini bosing, menejerimiz bog‘lanadi."
-        ),
         "contacts": (
             "📞 <b>Bog‘lanish</b>\n\n"
             "☎️ Telefon: <b>{phone}</b>\n"
@@ -148,7 +129,6 @@ T: dict[str, dict[str, str]] = {
     },
     "ru": {
         "btn_new": "✍️ Оставить обращение",
-        "btn_about": "🏢 О Golden Lake",
         "btn_contacts": "📞 Контакты",
         "btn_lang": "🌐 Сменить язык",
         "btn_cancel": "❌ Отменить",
@@ -176,24 +156,6 @@ T: dict[str, dict[str, str]] = {
         "menu": "Главное меню. Выберите раздел 👇",
         "use_menu": "Пожалуйста, воспользуйтесь меню ниже 👇\n\nДля нового обращения нажмите <b>«✍️ Оставить обращение»</b>.",
         "cancelled": "Обращение отменено. Вы можете отправить его заново в любое время.",
-        "about": (
-            "🏢 <b>Golden Lake</b> — #для_жизни\n\n"
-            "Современный жилой комплекс комфорт-класса в Мирабадском районе Ташкента. "
-            "Застройщик — <b>Centris Development</b>.\n\n"
-            "🌳 <b>Территория:</b> 70% озеленения, мини-озеро и парк, "
-            "более 1 000 деревьев и кустарников\n"
-            "🏙 <b>Дома:</b> 13, 15 и 16 этажей\n"
-            "🛏 <b>Квартиры:</b> от 1 до 5 комнат, от 30 м² до 250 м²\n"
-            "📐 <b>Потолки:</b> до 3 м\n"
-            "🔥 <b>Отопление:</b> автономное, двухконтурный газовый котёл\n"
-            "🚗 <b>Паркинг:</b> подземный и наземный\n"
-            "🛡 <b>Безопасность:</b> видеонаблюдение и контроль доступа\n"
-            "👨‍👩‍👧 <b>Во дворе:</b> детские площадки, летняя терраса, зоны отдыха\n\n"
-            "📍 <b>Рядом:</b> парк им. Фурката, Ташкентская международная школа, "
-            "более 5 школ и детских садов, городская клиника №3, роддом №5, аэропорт.\n\n"
-            "Есть вопросы о ценах и условиях оплаты? Нажмите "
-            "<b>«✍️ Оставить обращение»</b> — менеджер свяжется с вами."
-        ),
         "contacts": (
             "📞 <b>Контакты</b>\n\n"
             "☎️ Телефон: <b>{phone}</b>\n"

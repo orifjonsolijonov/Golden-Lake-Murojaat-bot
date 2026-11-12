@@ -18,8 +18,7 @@ def main_menu(lang: str) -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(
         keyboard=[
             [KeyboardButton(text=t(lang, "btn_new"))],
-            [KeyboardButton(text=t(lang, "btn_about")), KeyboardButton(text=t(lang, "btn_contacts"))],
-            [KeyboardButton(text=t(lang, "btn_lang"))],
+            [KeyboardButton(text=t(lang, "btn_contacts")), KeyboardButton(text=t(lang, "btn_lang"))],
         ],
         resize_keyboard=True,
     )
@@ -31,11 +30,8 @@ def cancel_kb(lang: str) -> ReplyKeyboardMarkup:
 
 def category_kb(lang: str) -> InlineKeyboardMarkup:
     idx = 1 if lang == "ru" else 0
-    keys = list(CATEGORIES)
-    rows = [
-        [InlineKeyboardButton(text=CATEGORIES[k][idx], callback_data=f"cat:{k}") for k in keys[i : i + 2]]
-        for i in range(0, len(keys), 2)
-    ]
+    # Har bir mavzu alohida qatorda — matn qisqarmasdan to‘liq ko‘rinadi
+    rows = [[InlineKeyboardButton(text=name[idx], callback_data=f"cat:{k}")] for k, name in CATEGORIES.items()]
     rows.append([InlineKeyboardButton(text=t(lang, "btn_cancel"), callback_data="flow:cancel")])
     return InlineKeyboardMarkup(inline_keyboard=rows)
 

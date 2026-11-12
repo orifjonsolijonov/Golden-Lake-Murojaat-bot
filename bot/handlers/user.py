@@ -104,11 +104,6 @@ async def btn_lang(message: Message) -> None:
     await message.answer(t("uz", "choose_lang"), reply_markup=kb.lang_kb())
 
 
-@router.message(F.text.in_(all_variants("btn_about")))
-async def btn_about(message: Message, db: DB) -> None:
-    await message.answer(t(await get_lang(db, message.from_user.id), "about"))
-
-
 @router.message(F.text.in_(all_variants("btn_contacts")))
 async def btn_contacts(message: Message, db: DB) -> None:
     await message.answer(t(await get_lang(db, message.from_user.id), "contacts"), disable_web_page_preview=True)

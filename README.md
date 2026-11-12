@@ -17,7 +17,6 @@ xodim kartochkaga **Reply** qilib javob yozadi → javob mijozga bot orqali bora
   │    4/4  Murojaat matni (matn, rasm, video, hujjat, ovozli xabar — 10 tagacha) → «✅ Tayyor»
   │    Tekshirish ekrani → «📨 Yuborish» / «✏️ Qaytadan to‘ldirish» / «❌ Bekor qilish»
   │    ✅ «Murojaatingiz qabul qilindi! Raqami: #0012»
-  ├─ 🏢 Golden Lake haqida
   ├─ 📞 Bog‘lanish
   └─ 🌐 Tilni o‘zgartirish
 ```
