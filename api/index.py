@@ -56,7 +56,9 @@ async def app(scope, receive, send):
     if scope["type"] != "http":
         return
 
-    path = scope.get("path", "/").rstrip("/")
+    query = parse_qs(scope.get("query_string", b"").decode())
+    # vercel.json rewrite asl yo'lni ?route=... ga qo'yadi
+    path = "/" + query.get("route", [""])[0] if query.get("route") else scope.get("path", "/").rstrip("/")
     method = scope.get("method", "GET")
     headers = {k.decode().lower(): v.decode() for k, v in scope.get("headers", [])}
 
@@ -71,7 +73,6 @@ async def app(scope, receive, send):
         return await _send(send, 200, {"ok": True})
 
     if path.endswith("/setup"):
-        query = parse_qs(scope.get("query_string", b"").decode())
         if not _secret_ok(query.get("secret", [""])[0]):
             return await _send(send, 403, {
                 "ok": False,
