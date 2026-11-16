@@ -40,11 +40,6 @@ def fmt_time(ts: int) -> str:
     return datetime.fromtimestamp(ts, config.tz).strftime("%d.%m.%Y, %H:%M")
 
 
-def user_link(user_id: int, username: str | None, full_name: str) -> str:
-    label = f"@{escape(username)}" if username else escape(full_name)
-    return f'<a href="tg://user?id={user_id}">{label}</a> · ID <code>{user_id}</code>'
-
-
 def join_texts(texts: list[str]) -> str:
     return "\n\n".join(x.strip() for x in texts if x and x.strip())
 
@@ -62,9 +57,7 @@ def render_card(ticket) -> str:
         f"{emoji} <b>{title} #{no}</b>",
         LINE,
         f"🏷 <b>Mavzu:</b> {escape(category_name(ticket['category'], 'uz'))}",
-        f"👤 <b>Ism:</b> {escape(ticket['full_name'])}",
-        f"📞 <b>Telefon:</b> {escape(ticket['phone'])}",
-        f"✈️ <b>Telegram:</b> {user_link(ticket['user_id'], ticket['username'], ticket['full_name'])}",
+        "🔒 <b>Muallif:</b> anonim",
         f"🌐 <b>Til:</b> {LANGS.get(ticket['lang'], ticket['lang'])}",
         f"🕒 <b>Vaqt:</b> {fmt_time(ticket['created_at'])}",
         LINE,

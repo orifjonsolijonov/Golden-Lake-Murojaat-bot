@@ -146,8 +146,7 @@ async def admin_reply(message: Message, db: DB, bot: Bot) -> None:
     except Exception as e:
         log.warning("Javobni mijozga yuborib bo‘lmadi (ticket %s): %s", no, e)
         await message.reply(
-            "⚠️ Javob mijozga yetkazilmadi — ehtimol, u botni bloklagan.\n"
-            f"Telefon orqali bog‘laning: {escape(ticket['phone'])}"
+            "⚠️ Javob mijozga yetkazilmadi — ehtimol, u botni bloklagan."
         )
         return
 

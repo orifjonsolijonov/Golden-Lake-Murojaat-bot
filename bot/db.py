@@ -96,19 +96,16 @@ class DB:
     async def create_ticket(
         self,
         user_id: int,
-        username: str | None,
         category: str,
-        full_name: str,
-        phone: str,
         lang: str,
         body: str,
         attachments: int,
     ) -> int:
         now = int(time.time())
         return await self.conn.fetchval(
-            "INSERT INTO tickets (user_id, username, category, full_name, phone, lang, body, attachments, "
-            "created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $9) RETURNING id",
-            user_id, username, category, full_name, phone, lang, body, attachments, now,
+            "INSERT INTO tickets (user_id, category, full_name, phone, lang, body, attachments, "
+            "created_at, updated_at) VALUES ($1, $2, '', '', $3, $4, $5, $6, $6) RETURNING id",
+            user_id, category, lang, body, attachments, now,
         )
 
     async def delete_ticket(self, ticket_id: int) -> None:

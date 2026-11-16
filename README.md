@@ -10,18 +10,15 @@ xodim kartochkaga **Reply** qilib javob yozadi → javob mijozga bot orqali bora
 ```
 /start → tilni tanlash (🇺🇿 / 🇷🇺) → salomlashish + asosiy menyu
   ├─ ✍️ Murojaat yuborish
-  │    1/4  Mavzu: Xonadon xarid qilish · Shartnoma va to‘lovlar · Qurilish jarayoni ·
-  │         Texnik masala · Shikoyat · Taklif · Boshqa savol
-  │    2/4  Ism-familiya   (Telegram'dagi ism tugma sifatida taklif qilinadi)
-  │    3/4  Telefon        («📱 Raqamni yuborish» tugmasi yoki qo‘lda; +998 formatiga keltiriladi)
-  │    4/4  Murojaat matni (matn, rasm, video, hujjat, ovozli xabar — 10 tagacha) → «✅ Tayyor»
-  │    Tekshirish ekrani → «📨 Yuborish» / «✏️ Qaytadan to‘ldirish» / «❌ Bekor qilish»
-  │    ✅ «Murojaatingiz qabul qilindi! Raqami: #0012»
-  ├─ 📞 Bog‘lanish
+  │    1/2  Mavzu: Shartnoma va to‘lovlar · Qurilish jarayoni · Texnik masala · Taklif · Boshqa savol
+  │    2/2  Murojaat matni (matn, rasm, video, hujjat, ovozli xabar — 10 tagacha) → «✅ Tayyor»
+  │    Tekshirish ekrani → «📨 Yuborish» / «✏️ Qaytadan yozish» / «❌ Bekor qilish»
+  │    ✅ «Murojaatingiz yuborildi! Raqami: #0012»
+  ├─ 📞 Bog‘lanish (@goldenlake_admin, telefon, sayt)
   └─ 🌐 Tilni o‘zgartirish
 ```
 
-- Ikkinchi murojaatda ism va telefon qayta so‘ralmaydi — «Shu ma’lumotlar bilan davom etamizmi?» deb so‘raladi.
+- Murojaatlar **anonim**: ism, telefon so‘ralmaydi, guruhda mijozning Telegram profili ham ko‘rinmaydi.
 - Xodim javobi mijozga «💬 Golden Lake mas’ul xodimi javobi — murojaat #0012» sarlavhasi bilan keladi.
   Mijoz shu xabarga Reply qilsa, uning xabari guruhdagi o‘sha murojaatga qo‘shiladi.
 - Ketma-ket spam yuborilmasligi uchun murojaatlar orasida 30 soniya kutish bor.
@@ -33,21 +30,19 @@ Har bir murojaat shunday ko‘rinadi:
 ```
 🆕 YANGI MUROJAAT #0012
 ━━━━━━━━━━━━━━━━
-🏷 Mavzu: 🏠 Xonadon xarid qilish
-👤 Ism: Aziz Karimov
-📞 Telefon: +998 90 123 45 67
-✈️ Telegram: @aziz · ID 123456789
+🏷 Mavzu: 📄 Shartnoma va to‘lovlar
+🔒 Muallif: anonim
 🌐 Til: 🇺🇿 O‘zbekcha
 🕒 Vaqt: 12.11.2026, 17:30
 ━━━━━━━━━━━━━━━━
 💬 Murojaat matni:
-│ 3 xonali xonadon narxi qancha? Muddatli to‘lov bormi?
+│ Muddatli to‘lov grafigini qayerdan ko‘rsam bo‘ladi?
 📎 Ilovalar: 2 ta — quyida ⬇️
 ━━━━━━━━━━━━━━━━
 📌 Holat: 🆕 Yangi
 ↩️ Mijozga javob berish uchun shu xabarga Reply qiling.
 
-#murojaat_0012 #xarid
+#murojaat_0012 #tolov
 [🟡 Jarayonda] [✅ Hal qilindi]
 [🚫 Spam]
 ```
@@ -57,7 +52,7 @@ Har bir murojaat shunday ko‘rinadi:
 - Birinchi javobdan so‘ng murojaat avtomatik **🟡 Jarayonda** holatiga o‘tadi.
 - Holat tugmalari kartochkani yangilaydi (kim va qachon o‘zgartirgani yoziladi) va mijozga xabar beradi.
 - «Hal qilindi» murojaatga mijoz yana yozsa — murojaat avtomatik qayta ochiladi.
-- Qidiruv: `#murojaat_0012`, `#shikoyat`, `#xarid` va h.k. hashtaglar.
+- Qidiruv: `#murojaat_0012`, `#tolov`, `#qurilish` va h.k. hashtaglar.
 - `/stats` — murojaatlar statistikasi. `/chatid` — guruh ID’sini ko‘rsatadi.
 
 ## Vercel'ga o‘rnatish (bepul)
@@ -103,7 +98,7 @@ Lokal sinovdan so‘ng Vercel’dagi botni qayta ulash uchun `/api/setup?secret=
 ## Matnlarni o‘zgartirish
 
 Barcha matnlar va tugmalar `bot/texts.py` faylida (o‘zbekcha va ruscha). Murojaat mavzulari — `CATEGORIES`,
-kompaniya telefoni/sayti — fayl boshidagi `PHONE`, `SITE`, `EMAIL`.
+kompaniya telefoni/sayti va admin — fayl boshidagi `PHONE`, `SITE`, `ADMIN`.
 
 ## Tuzilma
 

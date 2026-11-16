@@ -7,23 +7,29 @@ handlerlar avtomatik ravishda yangisini taniydi — ular shu fayldan olinadi.
 PHONE = "+998 55 515-44-44"
 SITE = "goldenlake.uz"
 EMAIL = "info@goldenlake.uz"
+ADMIN = "@goldenlake_admin"
 
 LANGS = {"uz": "🇺🇿 O‘zbekcha", "ru": "🇷🇺 Русский"}
 
 # Murojaat turlari: kalit -> (uz, ru)
 CATEGORIES: dict[str, tuple[str, str]] = {
-    "buy": ("🏠 Xonadon xarid qilish", "🏠 Покупка квартиры"),
     "payment": ("📄 Shartnoma va to‘lovlar", "📄 Договор и оплата"),
     "construction": ("🏗 Qurilish jarayoni", "🏗 Ход строительства"),
     "tech": ("🛠 Texnik masala", "🛠 Технический вопрос"),
-    "complaint": ("😔 Shikoyat", "😔 Жалоба"),
     "suggestion": ("💡 Taklif", "💡 Предложение"),
     "other": ("❓ Boshqa savol", "❓ Другой вопрос"),
 }
 
 
+# Menyudan olib tashlangan mavzular — eski murojaatlar to‘g‘ri ko‘rinishi uchun
+_OLD_CATEGORIES = {
+    "buy": ("🏠 Xonadon xarid qilish", "🏠 Покупка квартиры"),
+    "complaint": ("😔 Shikoyat", "😔 Жалоба"),
+}
+
+
 def category_name(key: str, lang: str = "uz") -> str:
-    uz, ru = CATEGORIES.get(key, CATEGORIES["other"])
+    uz, ru = CATEGORIES.get(key) or _OLD_CATEGORIES.get(key) or CATEGORIES["other"]
     return ru if lang == "ru" else uz
 
 
@@ -34,90 +40,53 @@ T: dict[str, dict[str, str]] = {
         "btn_contacts": "📞 Bog‘lanish",
         "btn_lang": "🌐 Tilni o‘zgartirish",
         "btn_cancel": "❌ Bekor qilish",
-        "btn_back": "⬅️ Orqaga",
-        "btn_share_phone": "📱 Raqamni yuborish",
         "btn_done": "✅ Tayyor",
         "btn_send": "📨 Yuborish",
-        "btn_edit": "✏️ Qaytadan to‘ldirish",
-        "btn_use_saved": "✅ Ha, shu ma’lumotlar bilan",
-        "btn_change_saved": "✏️ O‘zgartirish",
+        "btn_edit": "✏️ Qaytadan yozish",
 
         # --- Asosiy ---
         "choose_lang": "Assalomu alaykum! Tilni tanlang 👇\n\nЗдравствуйте! Выберите язык 👇",
         "welcome": (
             "Assalomu alaykum, <b>{name}</b>! 👋\n\n"
-            "Bu — <b>Golden Lake</b> turar-joy majmuasining rasmiy murojaatlar boti "
-            "(quruvchi: Centris Development).\n\n"
-            "Bu yerda siz:\n"
-            "• xonadon xarid qilish bo‘yicha savol berishingiz,\n"
-            "• shartnoma, to‘lov yoki qurilish jarayoni haqida so‘rashingiz,\n"
-            "• shikoyat yoki taklif qoldirishingiz mumkin.\n\n"
-            "Har bir murojaat mas’ul xodimlarimizga darhol yetkaziladi va "
-            "javob shu bot orqali sizga keladi. 📩\n\n"
+            "Bu — <b>Golden Lake</b> murojaatlar boti. Savol, taklif yoki muammongizni yozing — "
+            "javob shu yerga keladi.\n\n"
+            "🔒 Murojaat <b>anonim</b>: ism va telefon so‘ralmaydi.\n\n"
             "Boshlash uchun <b>«✍️ Murojaat yuborish»</b> tugmasini bosing."
         ),
-        "menu": "Asosiy menyu. Kerakli bo‘limni tanlang 👇",
-        "use_menu": "Iltimos, quyidagi menyudan foydalaning 👇\n\nYangi murojaat uchun <b>«✍️ Murojaat yuborish»</b> tugmasini bosing.",
-        "cancelled": "Murojaat bekor qilindi. Istalgan vaqtda qaytadan yuborishingiz mumkin.",
+        "menu": "Asosiy menyu 👇",
+        "use_menu": "Yangi murojaat uchun <b>«✍️ Murojaat yuborish»</b> tugmasini bosing 👇",
+        "cancelled": "Murojaat bekor qilindi.",
         "contacts": (
             "📞 <b>Bog‘lanish</b>\n\n"
+            "👤 Administrator: {admin}\n"
             "☎️ Telefon: <b>{phone}</b>\n"
-            "🌐 Sayt: {site}\n"
-            "✉️ Email: {email}\n"
-            "📍 Sotuv ofisi: Toshkent sh., Oltinko‘l ko‘chasi, 109\n\n"
-            "Yozma murojaat qoldirmoqchi bo‘lsangiz — <b>«✍️ Murojaat yuborish»</b> tugmasini bosing."
+            "🌐 Sayt: {site}"
         ),
 
         # --- Murojaat oqimi ---
-        "ask_category": "<b>1/4.</b> Murojaatingiz qaysi mavzuda? 👇",
-        "use_saved": (
-            "Oldingi murojaatingizdagi ma’lumotlar:\n\n"
-            "👤 {name}\n📞 {phone}\n\n"
-            "Shu ma’lumotlar bilan davom etamizmi?"
-        ),
-        "ask_name": (
-            "<b>2/4.</b> Ismingiz va familiyangizni yozing.\n\n"
-            "<i>Masalan: Aziz Karimov</i>"
-        ),
-        "bad_name": "Iltimos, ismingizni matn ko‘rinishida yozing (2–64 belgi).",
-        "ask_phone": (
-            "<b>3/4.</b> Siz bilan bog‘lanish uchun telefon raqamingiz.\n\n"
-            "Pastdagi <b>«📱 Raqamni yuborish»</b> tugmasini bosing yoki raqamni yozing.\n"
-            "<i>Masalan: +998 90 123 45 67</i>"
-        ),
-        "bad_phone": "Raqam noto‘g‘ri ko‘rinadi. Iltimos, <b>+998 90 123 45 67</b> ko‘rinishida yozing yoki tugma orqali yuboring.",
+        "ask_category": "<b>1/2.</b> Murojaat mavzusini tanlang 👇",
         "ask_message": (
-            "<b>4/4.</b> Endi murojaatingizni batafsil yozing. ✍️\n\n"
-            "Matn bilan birga <b>rasm, video, hujjat yoki ovozli xabar</b> ham yuborishingiz mumkin. "
-            "Bir nechta xabar yuborsangiz — barchasi bitta murojaatga qo‘shiladi.\n\n"
-            "Tugatgach, <b>«✅ Tayyor»</b> tugmasini bosing."
+            "<b>2/2.</b> Murojaatingizni yozing ✍️\n\n"
+            "Rasm, video, fayl yoki ovozli xabar ham yuborishingiz mumkin. "
+            "Tugatgach, <b>«✅ Tayyor»</b> ni bosing."
         ),
-        "msg_added": "✔️ Qo‘shildi ({count}/{max}). Yana qo‘shishingiz yoki <b>«✅ Tayyor»</b> tugmasini bosishingiz mumkin.",
-        "msg_limit": "Bitta murojaatga ko‘pi bilan {max} ta xabar qo‘shish mumkin. <b>«✅ Tayyor»</b> tugmasini bosing.",
-        "msg_unsupported": "Bu turdagi xabarni qabul qila olmayman. Iltimos, matn, rasm, video, hujjat yoki ovozli xabar yuboring.",
+        "msg_added": "✔️ Qo‘shildi ({count}/{max}). Yana yozing yoki <b>«✅ Tayyor»</b> ni bosing.",
+        "msg_limit": "Ko‘pi bilan {max} ta xabar qo‘shish mumkin. <b>«✅ Tayyor»</b> ni bosing.",
+        "msg_unsupported": "Bu turdagi xabar qabul qilinmaydi. Matn, rasm, video, fayl yoki ovozli xabar yuboring.",
         "files_count": "📎 Fayllar: {count} ta",
-        "msg_empty": "Avval murojaatingiz matnini yozing yoki fayl yuboring. ✍️",
+        "msg_empty": "Avval murojaatingizni yozing yoki fayl yuboring ✍️",
         "confirm": (
-            "📋 <b>Murojaatingizni tekshiring:</b>\n\n"
-            "🏷 <b>Mavzu:</b> {category}\n"
-            "👤 <b>Ism:</b> {name}\n"
-            "📞 <b>Telefon:</b> {phone}\n"
-            "💬 <b>Xabarlar:</b> {count} ta\n"
+            "📋 <b>Murojaatingiz:</b>\n\n"
+            "🏷 {category}\n"
             "{preview}\n"
-            "Hammasi to‘g‘rimi? <b>«📨 Yuborish»</b> tugmasini bosing."
+            "Yuboramizmi?"
         ),
         "sent": (
-            "✅ <b>Murojaatingiz qabul qilindi!</b>\n\n"
-            "📌 Murojaat raqami: <b>#{ticket}</b>\n\n"
-            "Mas’ul xodimimiz murojaatingizni ko‘rib chiqib, tez orada shu bot orqali "
-            "yoki telefon orqali siz bilan bog‘lanadi.\n\n"
-            "Shoshilinch holatda: <b>{phone}</b>"
+            "✅ <b>Murojaatingiz yuborildi!</b> Raqami: <b>#{ticket}</b>\n\n"
+            "Javob shu botga keladi."
         ),
-        "send_failed": (
-            "😔 Kechirasiz, texnik nosozlik tufayli murojaat yuborilmadi.\n\n"
-            "Iltimos, birozdan so‘ng qayta urinib ko‘ring yoki <b>{phone}</b> raqamiga qo‘ng‘iroq qiling."
-        ),
-        "too_fast": "Siz hozirgina murojaat yubordingiz. Yangi murojaat uchun {sec} soniya kuting, iltimos.",
+        "send_failed": "😔 Texnik nosozlik tufayli yuborilmadi. Birozdan so‘ng qayta urinib ko‘ring.",
+        "too_fast": "Yangi murojaat uchun {sec} soniya kuting, iltimos.",
         "session_expired": "Bu murojaat eskirgan. Iltimos, qaytadan boshlang.",
 
         # --- Javoblar ---
@@ -132,88 +101,51 @@ T: dict[str, dict[str, str]] = {
         "btn_contacts": "📞 Контакты",
         "btn_lang": "🌐 Сменить язык",
         "btn_cancel": "❌ Отменить",
-        "btn_back": "⬅️ Назад",
-        "btn_share_phone": "📱 Отправить номер",
         "btn_done": "✅ Готово",
         "btn_send": "📨 Отправить",
-        "btn_edit": "✏️ Заполнить заново",
-        "btn_use_saved": "✅ Да, с этими данными",
-        "btn_change_saved": "✏️ Изменить",
+        "btn_edit": "✏️ Написать заново",
 
         "choose_lang": "Assalomu alaykum! Tilni tanlang 👇\n\nЗдравствуйте! Выберите язык 👇",
         "welcome": (
             "Здравствуйте, <b>{name}</b>! 👋\n\n"
-            "Это официальный бот обращений жилого комплекса <b>Golden Lake</b> "
-            "(застройщик — Centris Development).\n\n"
-            "Здесь вы можете:\n"
-            "• задать вопрос о покупке квартиры,\n"
-            "• уточнить информацию по договору, оплате или ходу строительства,\n"
-            "• оставить жалобу или предложение.\n\n"
-            "Каждое обращение сразу передаётся ответственным сотрудникам, "
-            "а ответ придёт вам прямо в этот бот. 📩\n\n"
+            "Это бот обращений <b>Golden Lake</b>. Напишите вопрос, предложение или проблему — "
+            "ответ придёт сюда.\n\n"
+            "🔒 Обращение <b>анонимное</b>: имя и телефон не нужны.\n\n"
             "Чтобы начать, нажмите <b>«✍️ Оставить обращение»</b>."
         ),
-        "menu": "Главное меню. Выберите раздел 👇",
-        "use_menu": "Пожалуйста, воспользуйтесь меню ниже 👇\n\nДля нового обращения нажмите <b>«✍️ Оставить обращение»</b>.",
-        "cancelled": "Обращение отменено. Вы можете отправить его заново в любое время.",
+        "menu": "Главное меню 👇",
+        "use_menu": "Для нового обращения нажмите <b>«✍️ Оставить обращение»</b> 👇",
+        "cancelled": "Обращение отменено.",
         "contacts": (
             "📞 <b>Контакты</b>\n\n"
+            "👤 Администратор: {admin}\n"
             "☎️ Телефон: <b>{phone}</b>\n"
-            "🌐 Сайт: {site}\n"
-            "✉️ Email: {email}\n"
-            "📍 Офис продаж: г. Ташкент, ул. Алтынкуль, 109\n\n"
-            "Чтобы оставить письменное обращение, нажмите <b>«✍️ Оставить обращение»</b>."
+            "🌐 Сайт: {site}"
         ),
 
-        "ask_category": "<b>1/4.</b> Какая тема вашего обращения? 👇",
-        "use_saved": (
-            "Данные из вашего прошлого обращения:\n\n"
-            "👤 {name}\n📞 {phone}\n\n"
-            "Продолжим с этими данными?"
-        ),
-        "ask_name": (
-            "<b>2/4.</b> Напишите ваше имя и фамилию.\n\n"
-            "<i>Например: Азиз Каримов</i>"
-        ),
-        "bad_name": "Пожалуйста, напишите имя текстом (2–64 символа).",
-        "ask_phone": (
-            "<b>3/4.</b> Номер телефона для связи с вами.\n\n"
-            "Нажмите кнопку <b>«📱 Отправить номер»</b> ниже или напишите номер.\n"
-            "<i>Например: +998 90 123 45 67</i>"
-        ),
-        "bad_phone": "Номер выглядит некорректно. Напишите его в формате <b>+998 90 123 45 67</b> или отправьте кнопкой.",
+        "ask_category": "<b>1/2.</b> Выберите тему обращения 👇",
         "ask_message": (
-            "<b>4/4.</b> Теперь подробно опишите ваше обращение. ✍️\n\n"
-            "Вместе с текстом можно отправить <b>фото, видео, документ или голосовое сообщение</b>. "
-            "Если отправите несколько сообщений — все они попадут в одно обращение.\n\n"
+            "<b>2/2.</b> Напишите ваше обращение ✍️\n\n"
+            "Можно также отправить фото, видео, файл или голосовое. "
             "Когда закончите, нажмите <b>«✅ Готово»</b>."
         ),
-        "msg_added": "✔️ Добавлено ({count}/{max}). Можете добавить ещё или нажать <b>«✅ Готово»</b>.",
-        "msg_limit": "В одно обращение можно добавить не более {max} сообщений. Нажмите <b>«✅ Готово»</b>.",
-        "msg_unsupported": "Этот тип сообщения не поддерживается. Отправьте текст, фото, видео, документ или голосовое.",
+        "msg_added": "✔️ Добавлено ({count}/{max}). Напишите ещё или нажмите <b>«✅ Готово»</b>.",
+        "msg_limit": "Можно добавить не более {max} сообщений. Нажмите <b>«✅ Готово»</b>.",
+        "msg_unsupported": "Этот тип сообщения не поддерживается. Отправьте текст, фото, видео, файл или голосовое.",
         "files_count": "📎 Файлов: {count}",
-        "msg_empty": "Сначала напишите текст обращения или отправьте файл. ✍️",
+        "msg_empty": "Сначала напишите обращение или отправьте файл ✍️",
         "confirm": (
-            "📋 <b>Проверьте ваше обращение:</b>\n\n"
-            "🏷 <b>Тема:</b> {category}\n"
-            "👤 <b>Имя:</b> {name}\n"
-            "📞 <b>Телефон:</b> {phone}\n"
-            "💬 <b>Сообщений:</b> {count}\n"
+            "📋 <b>Ваше обращение:</b>\n\n"
+            "🏷 {category}\n"
             "{preview}\n"
-            "Всё верно? Нажмите <b>«📨 Отправить»</b>."
+            "Отправляем?"
         ),
         "sent": (
-            "✅ <b>Ваше обращение принято!</b>\n\n"
-            "📌 Номер обращения: <b>#{ticket}</b>\n\n"
-            "Ответственный сотрудник рассмотрит его и в ближайшее время свяжется с вами "
-            "через этот бот или по телефону.\n\n"
-            "В срочных случаях: <b>{phone}</b>"
+            "✅ <b>Обращение отправлено!</b> Номер: <b>#{ticket}</b>\n\n"
+            "Ответ придёт в этот бот."
         ),
-        "send_failed": (
-            "😔 Извините, из-за технической ошибки обращение не отправлено.\n\n"
-            "Пожалуйста, попробуйте чуть позже или позвоните по номеру <b>{phone}</b>."
-        ),
-        "too_fast": "Вы только что отправили обращение. Пожалуйста, подождите {sec} сек. перед новым.",
+        "send_failed": "😔 Из-за технической ошибки не отправлено. Попробуйте чуть позже.",
+        "too_fast": "Подождите {sec} сек. перед новым обращением, пожалуйста.",
         "session_expired": "Это обращение устарело. Пожалуйста, начните заново.",
 
         "admin_reply_header": "💬 Ответ сотрудника <b>Golden Lake</b> — обращение <b>#{ticket}</b>:",
@@ -231,6 +163,7 @@ def t(lang: str | None, key: str, **kwargs) -> str:
     kwargs.setdefault("phone", PHONE)
     kwargs.setdefault("site", SITE)
     kwargs.setdefault("email", EMAIL)
+    kwargs.setdefault("admin", ADMIN)
     return text.format(**kwargs) if kwargs else text
 
 

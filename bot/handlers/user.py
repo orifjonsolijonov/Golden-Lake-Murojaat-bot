@@ -2,7 +2,6 @@
 
 import asyncio
 import logging
-import re
 import time
 from collections import defaultdict
 
@@ -31,9 +30,6 @@ _locks: defaultdict[int, asyncio.Lock] = defaultdict(asyncio.Lock)
 
 class Form(StatesGroup):
     category = State()
-    saved = State()
-    name = State()
-    phone = State()
     collect = State()
     confirm = State()
 
@@ -42,17 +38,6 @@ class Form(StatesGroup):
 
 async def get_lang(db: DB, user_id: int) -> str:
     return await db.get_lang(user_id) or "uz"
-
-
-def normalize_phone(raw: str) -> str | None:
-    digits = re.sub(r"\D", "", raw)
-    if len(digits) == 9:                       # 901234567
-        digits = "998" + digits
-    if len(digits) == 12 and digits.startswith("998"):
-        return f"+{digits[:3]} {digits[3:5]} {digits[5:8]} {digits[8:10]} {digits[10:]}"
-    if 10 <= len(digits) <= 15:                # xorijiy raqamlar
-        return "+" + digits
-    return None
 
 
 def message_text(msg: Message) -> str:
@@ -124,7 +109,7 @@ async def cb_cancel(call: CallbackQuery, state: FSMContext, db: DB) -> None:
     await call.answer()
 
 
-# ---------------------------------------------------------------- 1. category
+# ---------------------------------------------------------------- 1. mavzu
 
 @router.message(Command("new"))
 @router.message(F.text.in_(all_variants("btn_new")))
@@ -150,61 +135,10 @@ async def cb_category(call: CallbackQuery, state: FSMContext, db: DB) -> None:
     await state.update_data(category=category)
     await call.message.edit_text(f"{t(lang, 'ask_category')}\n\n✔️ <b>{escape(category_name(category, lang))}</b>")
     await call.answer()
-
-    user = await db.get_user(call.from_user.id)
-    if user and user["full_name"] and user["phone"]:
-        await state.set_state(Form.saved)
-        await call.message.answer(
-            t(lang, "use_saved", name=escape(user["full_name"]), phone=escape(user["phone"])),
-            reply_markup=kb.saved_profile_kb(lang),
-        )
-        return
-    await state.set_state(Form.name)
-    await call.message.answer(t(lang, "ask_name"), reply_markup=kb.name_kb(lang, call.from_user.full_name))
+    await ask_message_step(call.message, state, lang)
 
 
-# ---------------------------------------------------------------- 2-3. name / phone
-
-@router.callback_query(Form.saved, F.data.startswith("saved:"))
-async def cb_saved(call: CallbackQuery, state: FSMContext, db: DB) -> None:
-    lang = await get_lang(db, call.from_user.id)
-    await call.message.edit_reply_markup(reply_markup=None)
-    await call.answer()
-    if call.data == "saved:yes":
-        user = await db.get_user(call.from_user.id)
-        await state.update_data(name=user["full_name"], phone=user["phone"])
-        await ask_message_step(call.message, state, lang)
-    else:
-        await state.set_state(Form.name)
-        await call.message.answer(t(lang, "ask_name"), reply_markup=kb.name_kb(lang, call.from_user.full_name))
-
-
-@router.message(Form.name)
-async def step_name(message: Message, state: FSMContext, db: DB) -> None:
-    lang = await get_lang(db, message.from_user.id)
-    name = " ".join((message.text or "").split())
-    if not (2 <= len(name) <= 64) or name.startswith("/"):
-        await message.answer(t(lang, "bad_name"))
-        return
-    await state.update_data(name=name)
-    await state.set_state(Form.phone)
-    await message.answer(t(lang, "ask_phone"), reply_markup=kb.phone_kb(lang))
-
-
-@router.message(Form.phone)
-async def step_phone(message: Message, state: FSMContext, db: DB) -> None:
-    lang = await get_lang(db, message.from_user.id)
-    raw = message.contact.phone_number if message.contact else (message.text or "")
-    phone = normalize_phone(raw)
-    if not phone:
-        await message.answer(t(lang, "bad_phone"))
-        return
-    data = await state.update_data(phone=phone)
-    await db.upsert_user(message.from_user.id, message.from_user.username, full_name=data["name"], phone=phone)
-    await ask_message_step(message, state, lang)
-
-
-# ---------------------------------------------------------------- 4. message parts
+# ---------------------------------------------------------------- 2. murojaat matni
 
 @router.message(StateFilter(Form.collect, Form.confirm), F.text.in_(all_variants("btn_done")))
 async def step_done(message: Message, state: FSMContext, db: DB) -> None:
@@ -231,9 +165,6 @@ async def step_done(message: Message, state: FSMContext, db: DB) -> None:
             lang,
             "confirm",
             category=escape(category_name(data["category"], lang)),
-            name=escape(data["name"]),
-            phone=escape(data["phone"]),
-            count=len(parts),
             preview=preview,
         ),
         reply_markup=kb.confirm_kb(lang),
@@ -332,10 +263,7 @@ async def submit_ticket(bot: Bot, db: DB, user, data: dict, lang: str) -> int | 
 
     ticket_id = await db.create_ticket(
         user_id=user.id,
-        username=user.username,
         category=data["category"],
-        full_name=data["name"],
-        phone=data["phone"],
         lang=lang,
         body=body,
         attachments=len(media_parts),
@@ -387,7 +315,6 @@ async def submit_ticket(bot: Bot, db: DB, user, data: dict, lang: str) -> int | 
 # ---------------------------------------------------------------- idle messages
 
 @router.callback_query(F.data.startswith("cat:"))
-@router.callback_query(F.data.startswith("saved:"))
 @router.callback_query(F.data.startswith("confirm:"))
 async def cb_stale(call: CallbackQuery, db: DB) -> None:
     """Eski xabardagi tugma bosilganda (holat mos kelmasa)."""
@@ -406,7 +333,7 @@ async def user_followup(message: Message, db: DB, bot: Bot) -> None:
 
     chat_id, card_id = ticket["card_chat_id"], ticket["card_message_id"]
     no = ticket_no(ticket_id)
-    header = f"📩 <b>Mijozdan qo‘shimcha xabar — #{no}</b>\n👤 {escape(ticket['full_name'])} · {escape(ticket['phone'])}"
+    header = f"📩 <b>Mijozdan qo‘shimcha xabar — #{no}</b>"
     reply_to = ReplyParameters(message_id=card_id, allow_sending_without_reply=True)
     try:
         if message.text:

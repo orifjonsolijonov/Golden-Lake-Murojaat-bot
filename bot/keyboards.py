@@ -36,33 +36,6 @@ def category_kb(lang: str) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=rows)
 
 
-def saved_profile_kb(lang: str) -> InlineKeyboardMarkup:
-    return InlineKeyboardMarkup(
-        inline_keyboard=[
-            [InlineKeyboardButton(text=t(lang, "btn_use_saved"), callback_data="saved:yes")],
-            [InlineKeyboardButton(text=t(lang, "btn_change_saved"), callback_data="saved:no")],
-        ]
-    )
-
-
-def name_kb(lang: str, tg_name: str | None) -> ReplyKeyboardMarkup:
-    rows = []
-    if tg_name:
-        rows.append([KeyboardButton(text=tg_name[:64])])
-    rows.append([KeyboardButton(text=t(lang, "btn_cancel"))])
-    return ReplyKeyboardMarkup(keyboard=rows, resize_keyboard=True)
-
-
-def phone_kb(lang: str) -> ReplyKeyboardMarkup:
-    return ReplyKeyboardMarkup(
-        keyboard=[
-            [KeyboardButton(text=t(lang, "btn_share_phone"), request_contact=True)],
-            [KeyboardButton(text=t(lang, "btn_cancel"))],
-        ],
-        resize_keyboard=True,
-    )
-
-
 def collect_kb(lang: str) -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(
         keyboard=[[KeyboardButton(text=t(lang, "btn_done"))], [KeyboardButton(text=t(lang, "btn_cancel"))]],
