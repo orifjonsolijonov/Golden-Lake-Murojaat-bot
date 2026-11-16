@@ -58,9 +58,7 @@ T: dict[str, dict[str, str]] = {
         "cancelled": "Murojaat bekor qilindi.",
         "contacts": (
             "📞 <b>Bog‘lanish</b>\n\n"
-            "👤 Administrator: {admin}\n"
-            "☎️ Telefon: <b>{phone}</b>\n"
-            "🌐 Sayt: {site}"
+            "👤 Administrator: {admin}"
         ),
 
         # --- Murojaat oqimi ---
@@ -118,9 +116,7 @@ T: dict[str, dict[str, str]] = {
         "cancelled": "Обращение отменено.",
         "contacts": (
             "📞 <b>Контакты</b>\n\n"
-            "👤 Администратор: {admin}\n"
-            "☎️ Телефон: <b>{phone}</b>\n"
-            "🌐 Сайт: {site}"
+            "👤 Администратор: {admin}"
         ),
 
         "ask_category": "<b>1/2.</b> Выберите тему обращения 👇",
